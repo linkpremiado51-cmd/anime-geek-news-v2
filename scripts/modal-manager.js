@@ -1,4 +1,5 @@
 /* scripts/modal-manager.js */
+registerModule('modal-manager', 'Gerenciador de modais');
 
 let noticiasDaSessao = []; 
 let indiceAtual = 0;
