@@ -1,4 +1,5 @@
 /* scripts/busca.js */
+registerModule('busca', 'Busca global');
 
 const inputBusca = document.getElementById('input-busca-global');
 const surface = document.getElementById('search-results-surface');
