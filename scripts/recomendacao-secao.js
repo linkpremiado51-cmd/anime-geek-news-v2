@@ -5,6 +5,7 @@
    • Controle de Foco (Teclado não abre sozinho)j
    • Design Harmônico
 ====================================================== */
+registerModule('modal-manager', 'Gerenciador de modais');
 registerModule('recomendacao', 'Recomendação de seções');
 
 (function(){
