@@ -21,7 +21,7 @@ window.noticiasFirebase = [];
 let linkProcessado = false;
 
 /**
- * Normaliza os dados extraindo a imagem (thumb) e formatando o vídeo.
+ * Normaliza os dadOs extraindo a imagem (thumb) e formatando o vídeo.
  */
 function normalizarNoticia(doc, nomeColecao) {
     const data = doc.data();
