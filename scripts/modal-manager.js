@@ -3,32 +3,19 @@
 let noticiasDaSessao = []; 
 let indiceAtual = 0;
 
-// ESTRUTURA EDITADA: Movi a ficha para fora do modal-body e adicionei o botão de controle
 const estruturaHTML = `
 <div id="modal-noticia-global">
     <div class="modal-content">
-        
         <div class="video-header">
             <iframe id="m-video" src="" allow="autoplay; fullscreen"></iframe>
             <button class="close-modal-btn" onclick="window.fecharModalGlobal()">×</button>
         </div>
-
-        <div id="ficha-area-control" style="display:none;">
-            <button id="btn-toggle-ficha" onclick="window.toggleFicha()">
-                <span><i class="fa-solid fa-circle-info"></i> Ficha Técnica</span>
-                <i class="fa-solid fa-chevron-down" id="icon-chevron"></i>
-            </button>
-            <div id="m-ficha-wrapper">
-                <div id="m-ficha"></div>
-            </div>
-        </div>
-
         <div class="modal-body">
             <div id="m-categoria"></div>
             <h2 id="m-titulo"></h2>
+            <div id="m-ficha"></div>
             <p id="m-resumo"></p>
         </div>
-
         <div class="modal-nav-footer">
             <button class="btn-nav" onclick="window.navegarNoticia(-1)">
                 <i class="fa-solid fa-chevron-left"></i> Anterior
@@ -49,8 +36,10 @@ if (!document.getElementById('modal-noticia-global')) {
  * Atualiza as Meta Tags para SEO dinamico e Título da Aba
  */
 const atualizarSEO = (noticia) => {
+    // 1. Atualiza o título da aba do navegador
     document.title = `${noticia.titulo} | AniGeekNews`;
 
+    // 2. Função auxiliar para atualizar ou criar meta tags
     const setMeta = (property, content) => {
         let el = document.querySelector(`meta[property="${property}"]`) || 
                  document.querySelector(`meta[name="${property}"]`);
@@ -62,23 +51,12 @@ const atualizarSEO = (noticia) => {
         el.setAttribute('content', content);
     };
 
+    // 3. Tags Open Graph (Facebook/Instagram/WhatsApp) e Twitter
     setMeta('og:title', noticia.titulo);
     setMeta('og:description', noticia.resumo ? noticia.resumo.substring(0, 160) : "");
     setMeta('og:image', noticia.thumb);
     setMeta('og:url', window.location.href);
     setMeta('twitter:card', 'summary_large_image');
-};
-
-/**
- * Nova Função para Expandir/Recolher a Ficha
- */
-window.toggleFicha = () => {
-    const wrapper = document.getElementById('m-ficha-wrapper');
-    const btn = document.getElementById('btn-toggle-ficha');
-    
-    // Alterna classe para animar
-    wrapper.classList.toggle('expandido');
-    btn.classList.toggle('ativo');
 };
 
 /**
@@ -96,20 +74,12 @@ const renderizarDadosNoModal = (noticia) => {
     document.getElementById('m-resumo').innerText = noticia.resumo || "";
     document.getElementById('m-link').href = noticia.linkArtigo || "#";
 
+    // O vídeo já vem formatado pelo config-firebase.js (normalizarNoticia)
     document.getElementById('m-video').src = noticia.videoPrincipal;
 
-    // LÓGICA DA FICHA EDITADA
     const fichaContainer = document.getElementById('m-ficha');
-    const areaControl = document.getElementById('ficha-area-control');
-    const wrapper = document.getElementById('m-ficha-wrapper');
-    const btn = document.getElementById('btn-toggle-ficha');
-
-    // Reseta o estado (sempre começa fechada ou como preferir)
-    wrapper.classList.remove('expandido');
-    btn.classList.remove('ativo');
-
     if (noticia.ficha && noticia.ficha.length > 0) {
-        areaControl.style.display = 'block'; // Mostra o botão/barra
+        fichaContainer.style.display = 'grid';
         fichaContainer.innerHTML = noticia.ficha.map(item => `
             <div class="info-item">
                 <span class="info-label">${item.label}</span>
@@ -117,9 +87,10 @@ const renderizarDadosNoModal = (noticia) => {
             </div>
         `).join('');
     } else {
-        areaControl.style.display = 'none'; // Esconde se não tiver ficha
+        fichaContainer.style.display = 'none';
     }
     
+    // Atualiza a URL e o SEO
     const url = new URL(window.location);
     url.searchParams.set('id', noticia.id);
     window.history.pushState({}, '', url);
@@ -152,6 +123,8 @@ window.fecharModalGlobal = () => {
     modal.style.display = 'none';
     document.getElementById('m-video').src = "";
     document.body.style.overflow = 'auto';
+
+    // Restaura o título padrão do site
     document.title = "AniGeekNews | Jornalismo Geek";
 
     const url = new URL(window.location);
